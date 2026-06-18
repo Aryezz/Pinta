@@ -44,7 +44,10 @@ public abstract class BaseBrushTool : BaseTool
 	{
 		Palette = services.GetService<IPaletteService> ();
 
-		BrushWidthSpinButton.TooltipText = Translations.GetString ("Change brush width. Shortcut keys: [ ]");
+		BrushWidthSpinButton.TooltipText = Translations.GetString ("Change brush width.") + "\n"
+			+ "\n" + Translations.GetString ("Shortcut keys:")
+			+ "\n" + Translations.GetString ("Press {0} to decrease brush width", "\"[\"")
+			+ "\n" + Translations.GetString ("Press {0} to increase brush width", "\"]\"");
 		BrushWidthSpinButton.OnValueChanged += (_, _) => OnBrushWidthChanged ();
 	}
 

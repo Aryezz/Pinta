@@ -434,38 +434,33 @@ internal sealed class MainWindow
 	private void CreateMainToolBar ()
 	{
 		if (window_shell.HeaderBar is not null) {
-			var header_bar = window_shell.HeaderBar;
-			header_bar.PackEnd (new Gtk.MenuButton () {
-				MenuModel = this.menu_bar,
-				IconName = Resources.StandardIcons.OpenMenu,
-				TooltipText = Translations.GetString ("Main Menu"),
-			});
+			var headerBar = window_shell.HeaderBar;
+			headerBar.PackEnd (GtkExtensions.CreateMenuButton (
+				this.menu_bar,
+				Resources.StandardIcons.OpenMenu,
+				Translations.GetString ("Main Menu")));
 
-			header_bar.PackEnd (new Gtk.MenuButton () {
-				MenuModel = PintaCore.Chrome.EffectsMenu,
-				IconName = Resources.Icons.EffectsDefault,
-				TooltipText = Translations.GetString ("Effects"),
-			});
+			headerBar.PackEnd (GtkExtensions.CreateMenuButton (
+				PintaCore.Chrome.EffectsMenu,
+				Resources.Icons.EffectsDefault,
+				Translations.GetString ("Effects")));
 
-			header_bar.PackEnd (new Gtk.MenuButton () {
-				MenuModel = PintaCore.Chrome.AdjustmentsMenu,
-				IconName = Resources.Icons.AdjustmentsBrightnessContrast,
-				TooltipText = Translations.GetString ("Adjustments"),
-			});
+			headerBar.PackEnd (GtkExtensions.CreateMenuButton (
+				PintaCore.Chrome.AdjustmentsMenu,
+				Resources.Icons.AdjustmentsDefault,
+				Translations.GetString ("Adjustments")));
 
-			header_bar.PackEnd (new Gtk.MenuButton () {
-				MenuModel = this.image_menu,
-				IconName = Resources.StandardIcons.ImageGeneric,
-				TooltipText = Translations.GetString ("Image"),
-			});
+			headerBar.PackEnd (GtkExtensions.CreateMenuButton (
+				this.image_menu,
+				Resources.StandardIcons.ImageGeneric,
+				Translations.GetString ("Image")));
 
-			header_bar.PackEnd (new Gtk.MenuButton () {
-				MenuModel = this.view_menu,
-				IconName = Resources.StandardIcons.ViewReveal,
-				TooltipText = Translations.GetString ("View"),
-			});
+			headerBar.PackEnd (GtkExtensions.CreateMenuButton (
+				this.view_menu,
+				Resources.StandardIcons.ViewReveal,
+				Translations.GetString ("View")));
 
-			PintaCore.Actions.CreateHeaderToolBar (header_bar);
+			PintaCore.Actions.CreateHeaderToolBar (headerBar);
 		} else {
 			var main_toolbar = window_shell.CreateToolBar ("main_toolbar");
 			PintaCore.Actions.CreateToolBar (main_toolbar);
@@ -508,9 +503,6 @@ internal sealed class MainWindow
 	private void CreateDockAndPads (Gtk.Box container)
 	{
 		ToolBoxWidget toolbox = new (PintaCore.Tools);
-
-		PintaCore.Tools.ToolAdded += (_, e) => toolbox.AddItem (e.Tool);
-		PintaCore.Tools.ToolRemoved += (_, e) => toolbox.RemoveItem (e.Tool);
 
 		Gtk.ScrolledWindow toolbox_scroll = new () {
 			Child = toolbox,
@@ -613,7 +605,18 @@ internal sealed class MainWindow
 		if (args.Value.GetBoxed (Gdk.FileList.GetGType ()) is not Gdk.FileList file_list)
 			return false;
 
-		foreach (Gio.File file in file_list.GetFilesHelper ()) {
+		foreach (Gio.File file_dropped in file_list.GetFilesHelper ()) {
+			Gio.File file = file_dropped;
+
+			// On macOS, GTK4 pasteboard currently provides malformed URIs where the scheme is URL-encoded
+			// (e.g., "file%3A///" instead of "file:///"). Because of this, GIO fails to recognize it as a local file.
+			// This was fixed in GTK 4.23.1, so this workaround can be removed once Pinta requires GTK >= 4.23.1.
+			string parseName = file_dropped.GetParseName ();
+			if (parseName.StartsWith ("file%3A///", StringComparison.OrdinalIgnoreCase)) {
+				string decodedUri = Uri.UnescapeDataString (parseName);
+				file = Gio.FileHelper.NewForUri (decodedUri);
+			}
+
 			PintaCore.Workspace.OpenFile (file);
 
 			if (file.GetUriScheme () is string scheme &&

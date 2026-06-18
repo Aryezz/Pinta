@@ -15,6 +15,7 @@ Thanks to the following contributors who worked on this release:
 - @levanel
 - @Aryezz
 - @IArnaut2
+- @robertoffmoura
 
 ### Added
 - The splatter brush now allows the minimum and maximum splatter size to be configured separately from the brush width
@@ -29,6 +30,7 @@ Thanks to the following contributors who worked on this release:
 - The flood tools now support holding the Shift key to switch to Global mode (#2075)
 - The transform tools now support holding the Ctrl key to translate the selection by larger increments when using the arrow keys (#2072, #1559)
 - The palette widget now shows the color's hex code in the tooltip (#2068, #2074)
+- The side panels can now be hidden using the F12 shortcut in addition to the existing menu item (#2119)
 
 ### Changed
 - Upgraded the minimum required .NET version to 10.0 (#2081)
@@ -39,13 +41,18 @@ Thanks to the following contributors who worked on this release:
 - Adjusted the layout of the layers panel to avoid issues with overlay scrollbars preventing the visibility toggle from being clicked (#1828, #2021)
 - Gradient types and colors can now be changed before finalizing the gradient (#2058, #2059)
 - Moved the Layers menu out of the main menu. The actions are available from a menu button in the Layers panel, or from right-clicking on layers (#1386, #2056)
+- Dropdowns in the toolbar now show the icons of each option and highlight the currently selected item when opened (#1977, #2092)
 - Adjusted layout of toolbar options in the shape tools to improve usability (#2012, #2019, #2039, #2107)
+- Added new icons for several effects and menu buttons (#2102)
+- Menu buttons now display popout nested menus instead of sliding menus (#2131)
 
 ### Fixed
 - Fixed a bug where duplicate submenus could be produced by add-ins with effect categories that were not translated (#1933, #1935)
 - The layers and history panels now scroll automatically to the selected item after any updates (#1867, #1828)
 - Fixed a bug where toolbox buttons other than the active tool could be highlighted in certain situations (#1369, #2099)
 - Fixed a bug with switching between shape tools that could cause unfinalized shapes to be stuck (#1420, #2096)
+- Fixed multiple bugs when adding a new layer when the topmost layer was not selected (#2150, #2129)
+- Fixed errors when dragging and dropping files on macOS (#2170, #2124)
 
 ## [3.1.2](https://github.com/PintaProject/Pinta/release/tag/3.1.2) - 2026/03/29
 
